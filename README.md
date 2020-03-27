@@ -9,6 +9,7 @@ I know for a fact that some locations that are marked as "clear" (location histo
 ## Updates (27/03/2020):
 - Added a janky CLI script for users without Jupyter (only exports a HTML table)
 - Fixed random copy/paste typo.
+- Fixed long/lat switch in results table (did not effect accuracy).
 
 ## Notes
 - This code calculates location history distance from exposure locations without any distance consideration.

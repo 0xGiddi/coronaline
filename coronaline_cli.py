@@ -165,8 +165,8 @@ def bigUglyCrosscheckloops(moh_df, loch_slice):
                 measured_distances = measured_distances.append({ 'index' : loc_idx,
                                                             'datetime' : loc_row.datetime,
                                                             'distance' : distance.km,
-                                                            'latitude' : loc_row.longitude,
-                                                            'longitude' : loc_row.latitude,
+                                                            'latitude' : loc_row.latitude,
+                                                            'longitude' : loc_row.longitude,
                                                             'accuracy' : loc_row.accuracy}, ignore_index=True)
             
             min_distance_df = measured_distances.sort_values(by=['distance'], ).head(1)
