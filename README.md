@@ -19,7 +19,7 @@ I know for a fact that some locations that are marked as "clear" (location histo
 - MOH like to add additional exposure times in the comment field, I ignore them.
 
 ## Testing
-With the supplied myData.json and govData.json, there should be 1169 cases of unknown locations marked orange on the map. Out of the 132 known locations, 130 should be ok (green) and 2 should be too close to an exposure location and marked with a red marker on the map (one in Ra'anana
+In order to test this with your own timeline data, you must go to [Google takeout](https://takeout.google.com) and export "Location History" as JSON. With the supplied myData.json and govData.json, there should be 1169 cases of unknown locations marked orange on the map. Out of the 132 known locations, 130 should be ok (green) and 2 should be too close to an exposure location and marked with a red marker on the map (one in Ra'anana
  and another at the Ruppin academic centre).
 
 ## Logic behind the code
