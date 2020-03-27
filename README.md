@@ -6,6 +6,10 @@
 > This code was **not** created with accuracy in mind, this is a POC and I really wanted to try my hand with pandas and used COVID-19 as an excuse. Please **do not** rely on the results.
 I know for a fact that some locations that are marked as "clear" (location history indicated not in proximity of location) also have additional date and time information in the comment field.
 
+## Updates (27/03/2020):
+- Added a janky CLI script for users without Jupyter (only exports a HTML table)
+- Fixed random copy/paste typo.
+
 ## Notes
 - This code calculates location history distance from exposure locations without any distance consideration.
 - The code is not just **not optimized**, it bad, slow and unreadable.
@@ -19,8 +23,30 @@ I know for a fact that some locations that are marked as "clear" (location histo
 - MOH like to add additional exposure times in the comment field, I ignore them.
 
 ## Testing
-In order to test this with your own timeline data, you must go to [Google takeout](https://takeout.google.com) and export "Location History" as JSON. With the supplied myData.json and govData.json, there should be 1169 cases of unknown locations marked orange on the map. Out of the 132 known locations, 130 should be ok (green) and 2 should be too close to an exposure location and marked with a red marker on the map (one in Ra'anana
+
+> If you just want the data without the map, use the CLI script, it's 3 times faster than the Jupyter notebook. The "min_distance_distance" column in the created HTML file is the interesting column.
+
+Required python modules for Jupyter:
+```
+numpy
+pandas
+geopy
+ipywidgets
+ipyleaflet
+```
+
+Required python modules for cli script:
+```
+numpy
+pandas
+geopy
+```
+
+In order to test this with your own timeline data, you must go to [Google takeout](https://takeout.google.com) and export "Location History" as JSON. The file needed is the "Location History.json" file.
+
+With the supplied myData.json and govData.json, there should be 1169 cases of unknown locations marked orange on the map. Out of the 132 known locations, 130 should be ok (green) and 2 should be too close to an exposure location and marked with a red marker on the map (one in Ra'anana
  and another at the Ruppin academic centre).
 
 ## Logic behind the code
     None.
+
