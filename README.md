@@ -1,4 +1,7 @@
 # Cross referencing Google location history with MOH COVID-19 exposure locations
+
+![Sample Image](sample_image.png)
+
 ## Important notice!
 > This code was **not** created with accuracy in mind, this is a POC and I really wanted to try my hand with pandas and used COVID-19 as an excuse. Please **do not** rely on the results.
 I know for a fact that some locations that are marked as "clear" (location history indicated not in proximity of location) also have additional date and time information in the comment field.
