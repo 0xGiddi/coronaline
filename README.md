@@ -6,10 +6,11 @@
 > This code was **not** created with accuracy in mind, this is a POC and I really wanted to try my hand with pandas and used COVID-19 as an excuse. Please **do not** rely on the results.
 I know for a fact that some locations that are marked as "clear" (location history indicated not in proximity of location) also have additional date and time information in the comment field.
 
-## Updates (27/03/2020):
-- Added a janky CLI script for users without Jupyter (only exports a HTML table)
-- Fixed random copy/paste typo.
-- Fixed long/lat switch in results table (did not effect accuracy).
+## Updates:
+- (27/03/2020) Added a janky CLI script for users without Jupyter (only exports a HTML table)
+- (27/03/2020) Fixed random copy/paste typo.
+- (27/03/2020) Fixed long/lat switch in results table (did not effect accuracy).
+- (28/03/2020) Changed HTML results format to reflect important data first.
 
 ## Notes
 - This code calculates location history distance from exposure locations without any distance consideration.

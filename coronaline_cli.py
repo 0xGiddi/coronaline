@@ -12,6 +12,7 @@ import geopy.distance
 import json
 import sys
 import os
+#import pdb
 
 GOV_CASE_LOC_URL = "https://gisweb.azureedge.net/Points.json"
 
@@ -219,7 +220,6 @@ def main():
     print(f"Location history slice from {loch_slice.datetime.min().strftime('%d/%m/%Y %H:%M')} to {loch_slice.datetime.max().strftime('%d/%m/%Y %H:%M')}")
     print()
     results, counters = bigUglyCrosscheckloops(moh_df, loch_slice)
-    html_table = results.sort_values(by=['min_distance_distance']).to_html()
     results_text = f"Total incidents checked: {results.shape[0]}\n"
     results_text += f"Incidents with unknown time skipped: {len(counters['unknown_datetime'])}\n"
     results_text += f"Incidents with bad time skipped: {len(counters['bad_datetime'])}\n"
@@ -229,8 +229,20 @@ def main():
     print(results_text)
     print("Saving to file...")
     with open(dt.datetime.now().strftime("results%Y%m%d_%H%M.html"), 'w', encoding="utf8") as out:
+        results = results.sort_values(by=['min_distance_distance'])
+        # These dataframes are totally unnecessary (and inefficient), but I cant be bothred to change bigUglyCrosscheckloops
+        # as all I want to do is to use the .to_html functionality.
+        missing_results = pd.DataFrame(counters['missing_results'])
+        bad_times_results = pd.DataFrame(counters['bad_datetime'])
         html_text = results_text.replace("\n", "<br/>")
-        out.write(f'<html dir="rtl"><head><meta charset="UTF-8"></head><body><div dir="ltr">{html_text}<br/>Tip: You can copy and paste any "_location" value to google maps. </div><br/>{html_table}</body></html>')
+        #pdb.set_trace()
+        out.write(f"""<html><head><meta charset="UTF-8"></head><body>
+            <h1>Location history cross referencing for {dt.datetime.now().strftime("%m/%d/%Y %H:%M")}</h1>{html_text}<br/>Tip: You can copy and paste any "_location" value into google maps.
+            <h1 style="color:#ff0000;">Locations found, distance < 1km ({results[results['min_distance_distance'] < 1].shape[0]} results)</h1><div dir="rtl">{results[results['min_distance_distance'] < 1].to_html()}</div><br/>
+            <h1 style="color:#ffa500;">Locations missing from history ({missing_results.shape[0]} results) </h1><div dir="rtl">{missing_results.to_html()}</div><br/>
+            <h1 style="color:#ebe939;">Locations with bad time information ({bad_times_results.shape[0]} results)</h1><div dir="rtl">{bad_times_results.to_html()}</div><br/>
+            <h1>All locations found (order: distance ascending)</h1><div dir="rtl">{results.to_html()}</div>
+            </body></html>""")
 
     print(dt.datetime.now() - startTime)
     return 0
