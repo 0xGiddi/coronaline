@@ -80,8 +80,8 @@ def transformMOHData(moh_file):
 
             return dt.datetime.combine(parsed_date + delta, parsed_time)
         except Exception as ex:
-            # A date of 01/01/3000 marks a parse error.
-            return dt.datetime(3000,1,1,0,0,0)
+            # A date of 01/01/2262 marks a parse error.
+            return dt.datetime(2262,1,1,0,0,0)
 
     moh_data = json.load(open(moh_file,  "r", encoding="utf8")) 
     moh_df = pd.DataFrame.from_dict(moh_data)  
@@ -101,12 +101,11 @@ def transformMOHData(moh_file):
     moh_df['debug_toTime'] = moh_df['features'].map(lambda x: dt.datetime.fromtimestamp(x['properties']['fromTime']/1000))
     moh_df = moh_df.drop(labels=['features'], axis=1, inplace=False)
 
-
     # Dispay subset of data and count and subset of bad time information
-    print(f"MOH data: from {moh_df.start_datetime.min().strftime('%d/%m/%Y %H:%M')} to {moh_df.end_datetime[moh_df.start_datetime < dt.datetime(3000,1,1,0,0,0)].max().strftime('%d/%m/%Y %H:%M')}")  
+    print(f"MOH data: from {moh_df.start_datetime.min().strftime('%d/%m/%Y %H:%M')} to {moh_df.end_datetime[moh_df.start_datetime < dt.datetime(2262,1,1,0,0,0)].max().strftime('%d/%m/%Y %H:%M')}")  
     bad_datetimes = moh_df[moh_df.start_datetime >= moh_df.end_datetime]
     no_bad_datetimes = bad_datetimes.shape[0]
-    unknown_datetimes = moh_df[moh_df.start_datetime == dt.datetime(3000,1,1,0,0,0)]
+    unknown_datetimes = moh_df[moh_df.start_datetime == dt.datetime(2262,1,1,0,0,0)]
     no_unknown_datetimes = unknown_datetimes.shape[0]
     print(f"Bad start/end datetimes: {no_bad_datetimes}") 
     print(f"Unknown datetimes: {no_unknown_datetimes}") 
@@ -142,7 +141,7 @@ def bigUglyCrosscheckloops(moh_df, loch_slice):
             if inc_row.start_datetime > inc_row.end_datetime:
                 counters['bad_datetime'].append(inc_row)
                 continue
-            if inc_row.start_datetime == dt.datetime(3000,1,1,0,0,0):
+            if inc_row.start_datetime == dt.datetime(2262,1,1,0,0,0):
                 counters['unknown_datetime'].append(inc_row)
                 continue
                 # Select the whole timerange
@@ -216,7 +215,7 @@ def main():
     moh_df = transformMOHData("govData.json")
     print()
     print("Selecting relevent slice from location history.")
-    loch_slice = loch_df[(loch_df.datetime >=  moh_df.start_datetime.min()) & (loch_df.datetime <= moh_df.end_datetime[moh_df.end_datetime < dt.datetime(3000,1,1,0,0,0)].max())]
+    loch_slice = loch_df[(loch_df.datetime >=  moh_df.start_datetime.min()) & (loch_df.datetime <= moh_df.end_datetime[moh_df.end_datetime < dt.datetime(2262,1,1,0,0,0)].max())]
     print(f"Location history slice from {loch_slice.datetime.min().strftime('%d/%m/%Y %H:%M')} to {loch_slice.datetime.max().strftime('%d/%m/%Y %H:%M')}")
     print()
     results, counters = bigUglyCrosscheckloops(moh_df, loch_slice)
@@ -233,6 +232,7 @@ def main():
         # These dataframes are totally unnecessary (and inefficient), but I cant be bothred to change bigUglyCrosscheckloops
         # as all I want to do is to use the .to_html functionality.
         missing_results = pd.DataFrame(counters['missing_results'])
+        unknown_datetime_results = pd.DataFrame(counters['unknown_datetime'])
         bad_times_results = pd.DataFrame(counters['bad_datetime'])
         html_text = results_text.replace("\n", "<br/>")
         #pdb.set_trace()
@@ -241,6 +241,7 @@ def main():
             <h1 style="color:#ff0000;">Locations found, distance < 1km ({results[results['min_distance_distance'] < 1].shape[0]} results)</h1><div dir="rtl">{results[results['min_distance_distance'] < 1].to_html()}</div><br/>
             <h1 style="color:#ffa500;">Locations missing from history ({missing_results.shape[0]} results) </h1><div dir="rtl">{missing_results.to_html()}</div><br/>
             <h1 style="color:#ebe939;">Locations with bad time information ({bad_times_results.shape[0]} results)</h1><div dir="rtl">{bad_times_results.to_html()}</div><br/>
+            <h1 style="color:#ebe939;">Locations with unknown time information ({unknown_datetime_results.shape[0]} results)</h1><div dir="rtl">{unknown_datetime_results.to_html()}</div><br/>
             <h1>All locations found (order: distance ascending)</h1><div dir="rtl">{results.to_html()}</div>
             </body></html>""")
 
